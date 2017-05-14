@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
 public class AccountService {
 
+    public AccountService(){
+        System.out.println("AccountService ");
+    }
     @Autowired
     private AccountDao accountDao;
 

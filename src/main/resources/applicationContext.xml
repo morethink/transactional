@@ -7,12 +7,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <util:properties id="jdbc" location="classpath:jdbc.properties"/>
-    <context:component-scan base-package="net.morethink">
-        <!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>-->
-    </context:component-scan>
-
+    <context:component-scan base-package="net.morethink"/>
+    <!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>-->
     <!--<context:annotation-config/>-->
-
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="jdbcUrl" value="#{jdbc.url}"/>
         <property name="driverClass" value="#{jdbc.driver}"/>
