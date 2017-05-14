@@ -4,23 +4,22 @@
        xmlns:tx="http://www.springframework.org/schema/tx" xmlns:utils="http://www.springframework.org/schema/p"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <util:properties id="jdbc" location="classpath:jdbc.properties"/>
-    <context:component-scan base-package="net.morethink"/>
-    <!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>-->
-    <!--<context:annotation-config/>-->
+    <context:component-scan base-package="net.morethink">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    <context:annotation-config/>
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="jdbcUrl" value="#{jdbc.url}"/>
         <property name="driverClass" value="#{jdbc.driver}"/>
         <property name="user" value="#{jdbc.user}"/>
         <property name="password" value="#{jdbc.password}"/>
-
-
         <property name="initialPoolSize" value="#{jdbc.initial}"/>
         <property name="minPoolSize" value="#{jdbc.min}"/>
         <property name="maxPoolSize" value="#{jdbc.max}"/>
-
         <property name="acquireIncrement" value="#{jdbc.increment}"/>
     </bean>
 
@@ -45,5 +44,20 @@
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
     </bean>
-    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <!--启用注解配置事务-->
+    <!--<tx:annotation-driven transaction-manager="transactionManager"/>-->
+
+    <!-- 配置事务的通知（事务的增强） -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="transfer"/>
+        </tx:attributes>
+    </tx:advice>
+    <!-- 配置aop切面 -->
+    <aop:config>
+        <!-- 配置切入点 -->
+        <aop:pointcut expression="execution(* net.morethink.service.AccountService+.*(..))" id="pointcut1"/>
+        <!-- 配置切面 -->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut1"/>
+    </aop:config>
 </beans>
